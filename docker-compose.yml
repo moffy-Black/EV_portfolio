@@ -1,57 +1,11 @@
-version: "3.7"
-
+version: '3.7'
 services:
-    api:
-        image: "fastapi_starter:1.0.0"
-        container_name: "fastapi_starter"
-        depends_on:
-            - db
+    server:
         build:
-            context: ./docker/api
+            context: ./backend
             dockerfile: Dockerfile
+        volumes:
+            - ./backend/:/backend/
+        command: uvicorn app.api.server:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
-            - "8888:8000"
-        volumes:
-            - ./app:/usr/src/app/app:cached
-            - ./db:/usr/src/app/db:cached
-            - ./scripts:/usr/src/app/scripts:cached
-        working_dir: /usr/src/app/scripts
-        command: bash -c "chmod 777 ./run.sh && ./run.sh"
-        networks:
-            - fastapi_network
-        environment:
-            APP_ENV: "development"
-            TZ: "Asia/Tokyo"
-        env_file:
-            - .env.development
-
-
-    db:
-        image: "fastapi_starter_db:0.1.0"
-        container_name: "fastapi_starter_db"
-        build:
-            context: ./docker/db
-            dockerfile: Dockerfile
-        restart: always
-        tty: true
-        expose:
-            - "3306"
-        volumes:
-            - ./docker/db/conf.d:/etc/mysql/conf.d:cached
-            - ./log/db:/var/log/mysql:cached
-        networks:
-            - fastapi_network
-        environment:
-            APP_ENV: "development"
-            TZ: "Asia/Tokyo"
-        env_file:
-            - .env.development
-
-networks:
-    default:
-        external:
-            name: bridge
-    fastapi_network:
-        name: fastapi_network
-        driver: bridge
-        external: true
+            - 8000:8000
