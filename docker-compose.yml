@@ -1,11 +1,22 @@
 version: '3.7'
 services:
-    server:
+    api:
+        image: "fastapi_starter:1.0.0"
+        container_name: "fastapi_starter"
         build:
-            context: ./backend
+            context: ./docker/api
             dockerfile: Dockerfile
-        volumes:
-            - ./backend/:/backend/
-        command: uvicorn app.api.server:app --reload --workers 1 --host 0.0.0.0 --port 8000
         ports:
-            - 8000:8000
+            - "8888:8000"
+        volumes:
+            - ./app:/usr/src/app/app:cached
+            - ./db:/usr/src/app/db:cached
+            - ./scripts:/usr/src/app/scripts:cached
+            - ./firebaseConfig.json:/usr/src/app/firebaseConfig.json:cached
+        working_dir: /usr/src/app/scripts
+        command: bash -c "chmod 777 ./run.sh && ./run.sh"
+        environment:
+            APP_ENV: "development"
+            TZ: "Asia/Tokyo"
+        env_file:
+            - .env.development
