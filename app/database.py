@@ -3,7 +3,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from env import DB_USER,DB_PASSWORD,DB_HOST,DB_NAME
 
-DATABASE = f"mysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}?charset=utf8"
+DATABASE = 'mysql://%s:%s@%s/%s?charset=utf8' % (
+    DB_USER,
+    DB_PASSWORD,
+    DB_HOST,
+    DB_NAME,
+)
 
 engine = create_engine(
     DATABASE,
@@ -14,7 +19,7 @@ engine = create_engine(
 SessionLocal = scoped_session(
     sessionmaker(
         autocommit=False,
-        autoflus=False,
+        autoflush=False,
         bind=engine
     )
 )

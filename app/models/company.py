@@ -15,6 +15,8 @@ class Company(Base, TimestampMixin):
 
     companyname = Column(String(256), nullable=False),
 
+    local = Column(String(256), nullable=False)
+
     users = relationship(
         "User",
         secondary=like,
